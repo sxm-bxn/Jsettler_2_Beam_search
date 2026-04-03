@@ -341,14 +341,15 @@ public class TestI18NGameoptScenStrings
         throws Exception
     {
         String pfull = SOCStringManager.PROPS_PATH_SERVER_FOR_CLIENT + ".properties";
-        if (pfull.charAt(0) != '/')
-            pfull = '/' + pfull;  // we're in a separate package from SOCStringManager
+        if (!pfull.startsWith("/")) {
+            pfull = '/' + pfull;
+         } // we're in a separate package from SOCStringManager
         final URL u = SOCStringManager.class.getResource(pfull);
         assertNotNull("Couldn't find " + pfull, u);
 
-        final File uf = new File(u.getPath());
-        final File dir = new File(uf.getParent());
-        assertTrue("Dir for " + pfull + " should exist", dir.isDirectory());
+        final File uf = new File(u.toURI());
+        final File dir = uf.getParentFile();
+        assertTrue("Dir for " + pfull + " should exist" + dir, (dir != null && dir.exists()&& dir.isDirectory()));
         String pname = uf.getName();
         assertTrue(pname.endsWith(".properties"));
         pname = pname.substring(0, pname.length() - ".properties".length());  // to use as prefix in loop
