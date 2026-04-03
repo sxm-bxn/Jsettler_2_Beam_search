@@ -410,7 +410,7 @@ public class SOCStringManager extends StringManager
     public static SOCStringManager getClientManager(Locale loc)
     {
         if (clientManager == null)
-            clientManager = new SOCStringManager("strings/client/data", loc);
+            clientManager = new SOCStringManager("resources/strings/client/data", loc);
 
         return clientManager;
     }

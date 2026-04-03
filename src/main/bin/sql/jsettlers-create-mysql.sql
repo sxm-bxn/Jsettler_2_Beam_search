@@ -7,12 +7,12 @@ CREATE DATABASE socdata
 -- note: utf8mb4 was added in mysql 5.5.3 (released 2010-03-24) to support
 -- unicode characters outside the BMP. If your mysql is older and you can't upgrade,
 -- change utf8mb4 to utf8 and utf8mb4_unicode_ci to utf8_unicode_ci and rerun the script.
+DROP USER IF EXISTS 'socuser'@'%';
 
+CREATE USER 'socuser'@'%' IDENTIFIED BY 'socpass';
 
-GRANT ALL PRIVILEGES
-  ON socdata.*
-  TO 'socuser'@'%'
-  IDENTIFIED BY 'socpass';
+GRANT ALL PRIVILEGES ON socdata.* TO 'socuser'@'%';
+
 
 -- Tested with mysql 5.1 and 5.5 on centos 6, 5.5 on MacOSX 10.9, mariadb 10.4 on centos 7
 
