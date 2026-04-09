@@ -5,6 +5,7 @@ apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'idea'
 
+
 buildscript {
     repositories {
         mavenCentral()
@@ -29,6 +30,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'mysql:mysql-connector-java:5.1.49'
     testImplementation 'junit:junit:4.13.1'
     implementation 'com.google.code.gson:gson:2.8.6'  // optional at runtime, for savegame feature
         // If version changes, update Readme.developer.md and jsserver.properties.sample
@@ -58,6 +60,7 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'  // override the system's default encoding
         // To test that this has an effect, use 'Cp1252' instead here and expect "unmappable character" errors in StringUtil.java
 }
+
 
 // unit tests
 
@@ -136,7 +139,7 @@ task serverJar(type: Jar) {
             'Main-Class': 'soc.server.SOCServer',
             'Implementation-Version': project.version,
             'Build-Revision': project.git_revision,
-            'Class-Path': 'gson.jar',
+            'Class-Path': 'gson.jar mysql-connector-java-5.1.49.jar'
         )
     }
     from(sourceSets.main.output) {
