@@ -30,6 +30,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 // import org.apache.log4j.Logger;
 
@@ -756,6 +757,25 @@ public class OpeningBuildStrategy {
 
         return roadEdge;
     }
+
+    /**
+     * Used in {@link RANRobotBrain}
+     * to select a random settlement in the initial stage
+     * @param getPotentialSettlements_arr the current array of available spots
+     * @return A coordinate for intial settlement
+     */
+    public int randomSettlement()
+    {
+        final int[] ourPotentialSettlements = ourPlayerData.getPotentialSettlements_arr();
+        if (ourPotentialSettlements == null)
+            return 0;  // Should not occur
+        Random r= new Random();
+        int options = ourPotentialSettlements.length;
+        int RAN_settlement = r.nextInt(options);
+        return RAN_settlement;
+    }
+
+
 
     /**
      * Given a set of nodes, run a bunch of metrics across them

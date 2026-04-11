@@ -26,7 +26,7 @@ package soc.robot;
 
 
 // import soc.baseclient.SOCDisplaylessPlayerClient;
-// import soc.disableDebug.D;
+import soc.disableDebug.D;
 
 // import soc.game.SOCBoard;
 // import soc.game.SOCBoardLarge;
@@ -102,6 +102,6 @@ public class BSBRobotBrain extends SOCRobotBrain{
 
     public BSBRobotBrain(SOCRobotClient rc, SOCRobotParameters params, SOCGame ga, CappedQueue<SOCMessage> mq) {
         super(rc, params, ga, mq);
-    
+        D.ebugPrintlnINFO();
     }
 }
