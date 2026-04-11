@@ -770,9 +770,9 @@ public class OpeningBuildStrategy {
         if (ourPotentialSettlements == null)
             return 0;  // Should not occur
         Random r= new Random();
-        int options = ourPotentialSettlements.length;
-        int RAN_settlement = r.nextInt(options);
-        return RAN_settlement;
+        int RAN_settlement = r.nextInt(ourPotentialSettlements.length);
+        final int Settlement_decsion = ourPotentialSettlements[RAN_settlement];
+        return Settlement_decsion;
     }
 
 

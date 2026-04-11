@@ -2897,8 +2897,10 @@ public class SOCRobotBrain extends Thread
                     final int firstSettleNode = openingBuildStrategy.planInitialSettlements();
                     placeFirstSettlement(firstSettleNode);
                     expectPUTPIECE_FROM_START1A = true;
+                    soc.debug.D.ebugPrintlnINFO("------------SOC Choice---" + firstSettleNode+ "-------------------------");
                     waitingForGameState = true;
                     counter = 0;
+
                 }
 
                 expectSTART1A = false;
@@ -2928,7 +2930,7 @@ public class SOCRobotBrain extends Thread
                 {
                     final int secondSettleNode = openingBuildStrategy.planSecondSettlement();
                     placeInitSettlement(secondSettleNode);
-
+                    soc.debug.D.ebugPrintlnINFO("------------SOC Choice---" + secondSettleNode+ "-------------------------");
                     expectPUTPIECE_FROM_START2A = true;
                     counter = 0;
                     waitingForGameState = true;
