@@ -24,13 +24,17 @@
  **/
 package soc.robot;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+// import java.util.Arrays;
+// import java.util.Comparator;
+// import java.util.Enumeration;
+// import java.util.Hashtable;
+// import java.util.Iterator;
+// import java.util.List;
+// import java.util.Map;
+// import java.util.Random;
+// import java.util.Set;
+// import java.util.TreeMap;
 
 // import org.apache.log4j.Logger;
 
@@ -769,11 +773,147 @@ public class OpeningBuildStrategy {
         final int[] ourPotentialSettlements = ourPlayerData.getPotentialSettlements_arr();
         if (ourPotentialSettlements == null)
             return 0;  // Should not occur
-        Random r= new Random();
-        int RAN_settlement = r.nextInt(ourPotentialSettlements.length);
-        final int Settlement_decsion = ourPotentialSettlements[RAN_settlement];
-        return Settlement_decsion;
+        Random r = new Random();
+        int RANSettlement = r.nextInt(ourPotentialSettlements.length);
+        final int settlementDecsion = ourPotentialSettlements[RANSettlement];
+        return settlementDecsion;
     }
+
+
+    public static <K, V extends Comparable<V> > TreeMap<K, V>
+    valueSort(final TreeMap<K, V> map)
+    {
+        // Static Method with return type Map and
+        // extending comparator class which compares values
+        // associated with two keys
+        Comparator<K> valueComparator = new Comparator<K>()
+        {
+            
+            public int compare(K k1, K k2)
+            {
+                int comp = map.get(k1).compareTo(map.get(k2));
+
+                if (comp == 0)
+                     return 1;
+
+                else
+                     return (-comp);
+            }
+        };
+    
+        // SortedMap created using the comparator
+        TreeMap<K, V> sorted = new TreeMap<K, V>(valueComparator);
+
+        sorted.putAll(map);
+
+        return sorted;
+    }
+    /**
+     * Using a fast algorithm to create an ordered map based on Probtotals
+     *    
+     * @return sortedMapI <integer coordinate, integer ProbTotal
+     */
+    
+    public TreeMap<Integer, Integer> fastProbabiltySearch()
+    {
+        log.debug("--- Beam search placement ---");
+        // final int width = BSBRobotBrain.width; 
+        // final int depth = BSBRobotBrain.depth;
+
+        SOCBoard board = game.getBoard();
+        SOCPlayerNumbers playerNumbers = new SOCPlayerNumbers(board);
+        int probTotal;
+        // int bestProbTotal;
+        final int[] prob = SOCNumberProbabilities.INT_VALUES;
+
+
+        final int[] ourPotentialSettlements = ourPlayerData.getPotentialSettlements_arr();
+        // NavigableMap<String, Integer> ProbabiltyTreeS = new TreeMap<>();
+        TreeMap<Integer, Integer> ProbabiltyTreeI = new TreeMap<>();
+        for (int i = 0; i < ourPotentialSettlements.length; ++i)
+            {
+                final int selectionNode = ourPotentialSettlements[i];
+                
+                playerNumbers.clear();
+                probTotal = playerNumbers.updateNumbersAndProbability(selectionNode, board, prob, null);
+                // ProbabiltyTreeS.put(board.nodeCoordToString(selectionNode),probTotal);
+                ProbabiltyTreeI.put(selectionNode,probTotal);
+            } 
+        // Map<String, Integer> sortedMap = valueSort(ProbabiltyTreeS);
+
+        // // Get a set of the entries on the sorted map
+        // Set<Map.Entry<String, Integer>> set = sortedMap.entrySet();
+
+        // // Get an iterator
+        // Iterator<Map.Entry<String, Integer>> i = set.iterator();
+
+        // while (i.hasNext())
+        // {
+        //     Map.Entry<String, Integer> mp = (Map.Entry<String, Integer>)i.next();
+
+        //     soc.debug.D.ebugPrintlnINFO(mp.getKey() + ": "+ (String.valueOf(mp.getValue())));   
+        // }        
+        TreeMap<Integer, Integer> sortedMapI = valueSort(ProbabiltyTreeI);
+        
+        // Get a set of the entries on the sorted map
+        Set<Map.Entry<Integer, Integer>> setI = sortedMapI.entrySet();
+
+        // Get an iterator
+        Iterator<Map.Entry<Integer, Integer>> iI = setI.iterator();
+
+        while (iI.hasNext())
+        {
+            Map.Entry<Integer, Integer> mpI = (Map.Entry<Integer, Integer>)iI.next();
+
+            soc.debug.D.ebugPrintlnINFO(mpI.getKey() + ": "+ (String.valueOf(mpI.getValue())));   
+        }
+      return sortedMapI;
+    }
+    /**
+     * Taking w nodes from ordered map
+     * Checking against legal spots and taking extra if probabilites match
+     * @param width The top w nodes kept at each level    
+     * @return subKeyList <integer> coordinates for further exploration 
+     */
+    
+    public List<Integer> nodesForAnalysis(TreeMap<Integer, Integer> sortedMap, List<Integer> plannedSettlementList)
+        {
+            int width = BSBRobotBrain.width; 
+            final SOCBoard board = game.getBoard();
+            boolean list_check = false;
+
+            // SOCPlayerNumbers playerNumbers = new SOCPlayerNumbers(board);
+            List<Integer> keyList = new ArrayList<>(sortedMap.keySet());
+            soc.debug.D.ebugPrintlnINFO("keyList size = "+ keyList.size()+ " -- keyList[width] = " + keyList.get(width));
+            Map<Integer, Integer> subMap = new TreeMap<>(sortedMap.headMap(keyList.get(width)));
+            List<Integer> subKeyList = new ArrayList<>(subMap.keySet()); 
+            while (list_check = false){
+                for (int i = 0; i < subKeyList.size(); i++){
+                    
+                    for (int j = 0; j < plannedSettlementList.size(); j++){
+                        if (board.isNodeAdjacentToNode(subKeyList.get(i), plannedSettlementList.get(j))){
+                            subKeyList.remove(i);
+                            break;    
+                    
+                        }
+                    }
+                }
+
+                if (subKeyList.size() < width){
+                    int width_add = width - subKeyList.size();
+                    TreeMap<Integer ,Integer> addWidthMap = new TreeMap<>(sortedMap.subMap(width + 1, width_add + 1));
+                    List<Integer> addWidthKeyList = new ArrayList<>(addWidthMap.keySet()); 
+                    for (int k = 0; k < addWidthKeyList.size(); k++){
+                        subKeyList.add(k);
+                    }
+                }
+                else {
+                    list_check = true;
+                }
+            }
+            return (subKeyList);
+        }
+
 
 
 
