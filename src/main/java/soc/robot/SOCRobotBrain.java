@@ -822,6 +822,13 @@ public class SOCRobotBrain extends Thread
     protected SOCPossiblePiece lastTarget;
 
     /**
+     * int that count placements to track turns
+     * 
+    */
+    public int SOCPlacementCount = 0;
+    
+
+    /**
      * Create a robot brain to play a game.
      *<P>
      * Depending on {@link SOCGame#getGameOptions() game options},
@@ -2899,6 +2906,7 @@ public class SOCRobotBrain extends Thread
                     expectPUTPIECE_FROM_START1A = true;
                     soc.debug.D.ebugPrintlnINFO("------------SOC Choice---" + firstSettleNode+ "-------------------------");
                     waitingForGameState = true;
+                    SOCPlacementCount = SOCPlacementCount + 1;
                     counter = 0;
 
                 }
@@ -2934,6 +2942,7 @@ public class SOCRobotBrain extends Thread
                     expectPUTPIECE_FROM_START2A = true;
                     counter = 0;
                     waitingForGameState = true;
+                    SOCPlacementCount = SOCPlacementCount + 1;
                 }
 
                 expectSTART2A = false;

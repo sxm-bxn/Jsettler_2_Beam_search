@@ -126,6 +126,7 @@ public class RANRobotBrain extends SOCRobotBrain {
                     expectPUTPIECE_FROM_START1A = true;
                     waitingForGameState = true;
                     counter = 0;
+                    SOCPlacementCount = SOCPlacementCount + 1;
                     soc.debug.D.ebugPrintlnINFO("------------random choice---" + firstSettleNode+ "-------------------------");
                 }
 
@@ -160,7 +161,9 @@ public class RANRobotBrain extends SOCRobotBrain {
                     expectPUTPIECE_FROM_START2A = true;
                     counter = 0;
                     waitingForGameState = true;
+                    SOCPlacementCount = SOCPlacementCount + 1;
                     soc.debug.D.ebugPrintlnINFO("------------------random choice" + secondSettleNode + "-----------------------");
+
                 }
 
                 expectSTART2A = false;

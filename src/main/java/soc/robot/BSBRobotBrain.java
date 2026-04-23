@@ -107,7 +107,7 @@ public class BSBRobotBrain extends SOCRobotBrain{
     }
 
     public static int width = 5;
-    public static int depth = 5;
+    public static int branch = 3;
         @Override
     protected void placeIfExpectPlacing()
     {
@@ -217,14 +217,16 @@ public class BSBRobotBrain extends SOCRobotBrain{
                 if ((! waitingForOurTurn) && ourTurn && (! (expectPUTPIECE_FROM_START1A && (counter < 4000))))
                 {
                     final int firstSettleNode = openingBuildStrategy.planInitialSettlements();
-                    final TreeMap<Integer,Integer> coordProbMap = (openingBuildStrategy.fastProbabiltySearch());
-                    final List<Integer> breadthSearchList = openingBuildStrategy.nodesForAnalysis(coordProbMap, null);
                     placeFirstSettlement(firstSettleNode);
+                    soc.debug.D.ebugPrintlnINFO("------------normal choice---" + firstSettleNode+ "-------------------------");
+                    final int beamSearchNode = openingBuildStrategy.BeamSearchFull(SOCPlacementCount);
+
+                    soc.debug.D.ebugPrintlnINFO("------------normal choice---" + beamSearchNode + "-------------------------");
+                    SOCPlacementCount = SOCPlacementCount + 1;
                     expectPUTPIECE_FROM_START1A = true;
                     waitingForGameState = true;
                     counter = 0;
-                    soc.debug.D.ebugPrintlnINFO("------------normal choice---" + firstSettleNode+ "-------------------------");
-                    soc.debug.D.ebugPrintlnINFO(Arrays.toString(breadthSearchList.toArray()) );
+
                 }
 
                 expectSTART1A = false;
@@ -252,13 +254,14 @@ public class BSBRobotBrain extends SOCRobotBrain{
             {
                 if ((! waitingForOurTurn) && ourTurn && (! (expectPUTPIECE_FROM_START2A && (counter < 4000))))
                 {
-                    final int secondSettleNode = openingBuildStrategy.randomSettlement();
+                    final int secondSettleNode = openingBuildStrategy.planSecondSettlement();
                     placeInitSettlement(secondSettleNode);
 
                     expectPUTPIECE_FROM_START2A = true;
                     counter = 0;
                     waitingForGameState = true;
                     soc.debug.D.ebugPrintlnINFO("------------------random choice" + secondSettleNode + "-----------------------");
+                    
                 }
 
                 expectSTART2A = false;
