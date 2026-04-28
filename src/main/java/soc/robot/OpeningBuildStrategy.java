@@ -25,6 +25,9 @@
 package soc.robot;
 
 import java.util.*;
+
+import javax.swing.text.StyledEditorKit.BoldAction;
+
 import org.javatuples.Pair;
 import java.lang.reflect.Array;
 
@@ -902,7 +905,7 @@ public class OpeningBuildStrategy {
     public List<Integer> nodesForAnalysis(TreeMap<Integer, Integer> sortedMap, List<Integer> plannedSettlementList, int BSBTurn, int currentTurn)
     {
         int width = BSBRobotBrain.width - 1; 
-        int branch = BSBRobotBrain.branch;
+        
         final SOCBoard board = game.getBoard();
         boolean listCheck = false;
         // int listSize[] = new int[branch]; 
@@ -938,57 +941,6 @@ public class OpeningBuildStrategy {
         }
         return (subKeyList);
     }   
-    // public List<Integer> nodesForAnalysis2(TreeMap<Integer, Integer> sortedMap, List<Integer> plannedSettlementList, int BSBTurn, int currentTurn){
-    //     int width = BSBRobotBrain.width - 1; 
-    //     int branch = BSBRobotBrain.branch;
-    //     final SOCBoard board = game.getBoard();
-    //     boolean listCheck = false;
-    //     int branchNodeSize = plannedSettlementList.size()/branch;
-
-
-    //     int listSize[] = new int[branch-1]; 
-    //     List<Integer> keyList = new ArrayList<>();
-    //     List<Integer> branchSettlementList = new ArrayList<>();
-        
-    //     Map<Integer, Integer> subMap = new TreeMap<>();
-    //     TreeMap<List<Integer>, Integer> branchTreeMap = new TreeMap<>();
-
-    //     List<Integer> finalNodeList = new ArrayList<>(); 
-
-    //     for (int x = 0; x < branch; x++){
-    //         keyList.addAll(sortedMap.keySet());
-    //         for (int z = 0; z < branchNodeSize; z++){
-    //             branchSettlementList.add(plannedSettlementList.get(x + z*branch));
-    //         }
-    //         for (int i = 0; i < keyList.size(); i++ ){
-    //             for (int j = 0; j < branchSettlementList.size(); j++){
-    //                 if (board.isNodeAdjacentToNode(keyList.get(i), branchSettlementList.get(j))){
-    //                     keyList.remove(i);
-    //                     break;                  
-    //                 }
-    //                 else {
-    //                     branchSettlementList.add(keyList.get(i));
-    //                     branchTreeMap.put(branchSettlementList, sortedMap.get(keyList.get(i)));
-    //                     branchSettlementList.remove(branchSettlementList.size());
-    //                 }
-    //             }   
-    //         }
-    //         listSize[x] = keyList.size();
-            
-            
-    //     }
-    //     final List<List<Integer>> finalKeyList = new ArrayList<>((branchTreeMap.keySet()));
-    //     while (finalNodeList.size() != width){
-    //         Map<List<Integer>,Integer> comparisonList = new TreeMap<>();
-    //         comparisonList.put()
-    //         for (int i = 0; i < branch; i++){
-    //             comparisonList.put(branchTreeMap.get(finalKeyList.get(1 + listSize[i])));
-    //         }
-    //         List<Integer>  minMaxNode =   
-    //     } 
-
-    //     return;
-    // }
 
      public List<List<Integer>> nodesForAnalysis3(TreeMap<Integer, Integer> sortedMap, List<List<Integer>> plannedSettlementList){
         
@@ -1005,7 +957,7 @@ public class OpeningBuildStrategy {
 
         for (int x = 0; x < plannedSettlementList.size(); x++){
             List<Integer> keyList = new ArrayList<>();
-            
+            // iterate over full list 
             int y = 0;
             keyList.addAll(sortedMap.keySet());
             
@@ -1013,16 +965,19 @@ public class OpeningBuildStrategy {
             for (int i = 0; i < keyList.size(); i++ ){
                 if (y == width){
                     break;
-                }
+                } // if width of list reach complete branch 
                 List<Integer> branchSettlementList = new ArrayList<>();
-                branchSettlementList.addAll(plannedSettlementList.get(x));
-                Integer branchSettlementSize = branchSettlementList.size();
+                branchSettlementList.addAll(plannedSettlementList.get(x)); // add a branch to search over still possible spots
+                Integer branchSettlementSize = branchSettlementList.size(); // number of nodes in branch 
                 
+
                 
                 for (int j = 0; j < branchSettlementSize; j++){ 
                     foundNode = true;
                     soc.debug.D.ebugPrintlnINFO(keyList.get(i).toString()+"---"+"---"+branchSettlementList.get(j).toString());
                     if (board.isNodeAdjacentToNode(keyList.get(i), branchSettlementList.get(j)) || keyList.get(i) == branchSettlementList.get(j)){
+                        // if new node is too close to any in current branch remove 
+
                         soc.debug.D.ebugPrintlnINFO("--NodeRemoved--"+(keyList.get(i).toString())+"----"+(i)+"-"+(x)+"-----------");
                         keyList.remove(i) ;
                         
@@ -1032,8 +987,10 @@ public class OpeningBuildStrategy {
                 }
 
                 if (foundNode == true){
-                    branchSettlementList.add(keyList.get(i));
-                    branchNodesList.add(branchSettlementList);
+                    // else add to list as taking in sorted order 
+
+                    branchSettlementList.add(keyList.get(i));   // add new node to current branch 
+                    branchNodesList.add(branchSettlementList);  // add full new branch to final list 
                     soc.debug.D.ebugPrintlnINFO("--BranchNodeList--"+(branchNodesList.get(branchNodesList.size()-1)).toString()+"----"+(i)+"-"+(x)+"-----------");
                     soc.debug.D.ebugPrintlnINFO("--BranchNode--"+(keyList.get(i).toString())+"----"+(i)+"-"+(x)+"-----------");
                     
@@ -1048,7 +1005,169 @@ public class OpeningBuildStrategy {
         return branchNodesList;
     }
 
-    
+
+     public List<List<Integer>> fullNodeAnalysis(TreeMap<Integer, Integer> sortedMap, List<List<Integer>> plannedSettlementList){
+        
+        int width = BSBRobotBrain.width; 
+        int branch = BSBRobotBrain.branch;
+        int branchNodeSize = plannedSettlementList.size()/branch;
+        soc.debug.D.ebugPrintlnINFO("--FullNodeAnalysis-started--");
+        final SOCBoard board = game.getBoard();
+        boolean foundNode = true;
+        TreeMap<Integer,TreeMap<Integer, Integer>> fullBranchScoreMap = new TreeMap<>();
+        TreeMap<Integer,List< Integer>> branchCoords = new TreeMap<>();
+        
+        List<List<Integer>> branchNodesList = new ArrayList<>();
+
+        for (int x = 0; x < plannedSettlementList.size(); x++){
+            List<Integer> keyList = new ArrayList<>();
+            // iterate over full list 
+            int y = 0;
+            keyList.addAll(sortedMap.keySet());
+            List<Integer> branchList = new ArrayList<>();
+            // soc.debug.D.ebugPrintlnINFO(branchSettlementList.toString());
+            for (int i = 0; i < keyList.size(); i++ ){
+                List<Integer> branchSettlementList = new ArrayList<>();
+                
+                branchSettlementList.addAll(plannedSettlementList.get(x)); // add a branch to search over still possible spots
+                Integer branchSettlementSize = branchSettlementList.size(); // number of nodes in branch 
+                for (int j = 0; j < branchSettlementSize; j++){ 
+                    foundNode = true;
+                    soc.debug.D.ebugPrintlnINFO(keyList.get(i).toString()+"---"+"---"+branchSettlementList.get(j).toString());
+                    if (board.isNodeAdjacentToNode(keyList.get(i), branchSettlementList.get(j)) || keyList.get(i) == branchSettlementList.get(j)){
+                        // if new node is too close to any in current branch remove 
+
+                        soc.debug.D.ebugPrintlnINFO("--NodeRemoved--"+(keyList.get(i).toString())+"----"+(i)+"-"+(x)+"-----------");
+                        keyList.remove(i) ;
+                        
+                        foundNode = false;
+                        break;                  
+                    }
+                }
+
+                if (foundNode == true){
+                    // else add to list as taken in sorted order 
+ 
+                    branchList.add(keyList.get(i));  // add node to branch list  
+                    soc.debug.D.ebugPrintlnINFO("--BranchNode--"+(keyList.get(i).toString())+"----"+(i)+"-"+(x)+"-----------");
+                    y = y + 1;       
+                }
+
+                if (y == width){
+                    TreeMap<Integer, Integer> branchScoreMap = new TreeMap<>();
+
+                    for (int j = 0; j < branchList.size(); j++){
+                        int currentBranchScore = realSingleNodeEvaluation(branchList.get(j));
+                        branchScoreMap.put(branchList.get(j), currentBranchScore);
+                    }
+
+                    TreeMap<Integer, Integer> coordScoreSort = valueSort(branchScoreMap);
+
+                    fullBranchScoreMap.put(x,coordScoreSort);
+                    branchCoords.put(x, branchSettlementList);
+                            // Get a set of the entries on the sorted map
+                    Set<Map.Entry<Integer, Integer>> setI = coordScoreSort.entrySet();
+
+                    // Get an iterator
+                    Iterator<Map.Entry<Integer, Integer>> iI = setI.iterator();
+                    soc.debug.D.ebugPrintlnINFO("---coordscoremap----");
+                    while (iI.hasNext())
+                    {
+                        Map.Entry<Integer, Integer> mpI = (Map.Entry<Integer, Integer>)iI.next();
+
+                        soc.debug.D.ebugPrintlnINFO(mpI.getKey() + ": "+ (String.valueOf(mpI.getValue())));   
+                    }
+                    break;
+                } // if width of list reach complete branch 
+            }          
+        }
+        boolean mapped = false;
+        while (branchNodesList.size() < branch){
+            TreeMap<Integer, Integer> scoreTree = new TreeMap<>();
+            
+            if (mapped == false){
+                for (int x = 0; x <  plannedSettlementList.size(); x++ ){
+                    TreeMap<Integer, Integer> innerMap = fullBranchScoreMap.get(x);
+                    Set<Map.Entry<Integer, Integer>> setI = innerMap.entrySet();
+
+                    // Get an iterator
+                    Iterator<Map.Entry<Integer, Integer>> iI = setI.iterator();
+                    soc.debug.D.ebugPrintlnINFO("---innermap----");
+                    while (iI.hasNext())
+                    {
+                        Map.Entry<Integer, Integer> mpI = (Map.Entry<Integer, Integer>)iI.next();
+
+                        soc.debug.D.ebugPrintlnINFO(mpI.getKey() + ": "+ (String.valueOf(mpI.getValue())));   
+                    }
+                    
+                    // List<Integer> scoreKeyList = new ArrayList<>(innerMap.keySet());
+                    // List<Integer> branchKeyList = new ArrayList<>(branchCoords.keySet());
+                    Integer mCord = branchCoords.get(x).get(0);
+                    Integer oCord = innerMap.firstEntry().getKey();
+                    Integer mScore = realSingleNodeEvaluation(mCord);
+                    Integer oScore = realSingleNodeEvaluation(oCord);
+                    Integer scoreDifference = mScore - oScore;
+                    soc.debug.D.ebugPrintlnINFO("my coor = "+ mCord.toString() + ":" +  mScore.toString());
+                    soc.debug.D.ebugPrintlnINFO("their coor = "+ oCord.toString() + ":" + oScore.toString());
+                    scoreTree.put(x,(scoreDifference));
+                    mapped = true;
+                }                
+            }
+            for (int x = 0; x <  plannedSettlementList.size(); x++ ){
+                TreeMap<Integer, Integer> innerMap = fullBranchScoreMap.get(x);
+                Set<Map.Entry<Integer, Integer>> setI = innerMap.entrySet();
+
+                // Get an iterator
+                Iterator<Map.Entry<Integer, Integer>> iI = setI.iterator();
+                soc.debug.D.ebugPrintlnINFO("---innermap----");
+                while (iI.hasNext())
+                {
+                    Map.Entry<Integer, Integer> mpI = (Map.Entry<Integer, Integer>)iI.next();
+
+                    soc.debug.D.ebugPrintlnINFO(mpI.getKey() + ": "+ (String.valueOf(mpI.getValue())));   
+                }
+                
+                // List<Integer> scoreKeyList = new ArrayList<>(innerMap.keySet());
+                // List<Integer> branchKeyList = new ArrayList<>(branchCoords.keySet());
+                Integer mCord = branchCoords.get(x).get(0);
+                Integer oCord = innerMap.firstEntry().getKey();
+                Integer mScore = realSingleNodeEvaluation(mCord);
+                Integer oScore = realSingleNodeEvaluation(oCord);
+                Integer scoreDifference = mScore - oScore;
+                soc.debug.D.ebugPrintlnINFO("my coor = "+ mCord.toString() + ":" +  mScore.toString());
+                soc.debug.D.ebugPrintlnINFO("their coor = "+ oCord.toString() + ":" + oScore.toString());
+                scoreTree.put(x,(scoreDifference));
+            }
+            TreeMap<Integer, Integer> branchScoreSort = valueSort(scoreTree);
+            // List<Integer> keyList = new ArrayList<>(branchScoreSort.keySet());
+            Integer bestBranch = branchScoreSort.firstEntry().getKey();
+            List<Integer> finalBranchList = new ArrayList<>();
+            finalBranchList.addAll(branchCoords.get(bestBranch));
+            TreeMap<Integer, Integer> innerMap = new TreeMap<>(fullBranchScoreMap.get(bestBranch));
+
+            Set<Map.Entry<Integer, Integer>> setI = innerMap.entrySet();
+
+            // Get an iterator
+            Iterator<Map.Entry<Integer, Integer>> iI = setI.iterator();
+            soc.debug.D.ebugPrintlnINFO("---out of mapping innermap----");
+            while (iI.hasNext())
+            {
+                Map.Entry<Integer, Integer> mpI = (Map.Entry<Integer, Integer>)iI.next();
+
+                soc.debug.D.ebugPrintlnINFO(mpI.getKey() + ": "+ (String.valueOf(mpI.getValue())));   
+            }
+
+            Integer oCord = innerMap.firstEntry().getKey();
+            soc.debug.D.ebugPrintlnINFO("---best branch---" + bestBranch.toString());
+            soc.debug.D.ebugPrintlnINFO("---coord added---" + oCord.toString()+ "coord value" + innerMap.get(oCord));
+            finalBranchList.add(oCord);    
+            Integer Removed = innerMap.remove(oCord);
+            soc.debug.D.ebugPrintlnINFO(Removed.toString());
+            branchNodesList.add(finalBranchList);
+        }
+        
+        return branchNodesList;
+    }
 
     public TreeMap<Integer, Integer> singleNodeExploration(List<Integer> nodeList){
 
@@ -1056,8 +1175,6 @@ public class OpeningBuildStrategy {
         SOCPlayerNumbers playerNumbers = new SOCPlayerNumbers(board);
         final int[] prob = SOCNumberProbabilities.INT_VALUES;
         TreeMap<Integer, Integer> coordScoreMap = new TreeMap<>();
-
-
 
         int[] boardResourceQuantity = estimateResourceRarity(); // 0-Brick, 1-Ore, 2-Sheep, 3-Wheat, 4-Wood 
         TreeMap<Integer,Integer> scarcityScore = new TreeMap<>();
@@ -1072,7 +1189,6 @@ public class OpeningBuildStrategy {
             int probTotal = playerNumbers.updateNumbersAndProbability(currentNode, board, prob, null);
             Integer coordScore = 0;
             coordScore = coordScore + probTotal;
-
 
             List<Integer> hexes = board.getAdjacentHexesToNode(currentNode);
             List<Integer> hexType = new ArrayList<>();
@@ -1114,24 +1230,144 @@ public class OpeningBuildStrategy {
         return coordScoreSort;
     }
 
-    public int multiNodeScoreFunction (List<List<Integer>> branchNodes){
+    
+
+        public  Integer realSingleNodeEvaluation(Integer node){
+
         SOCBoard board = game.getBoard();
         SOCPlayerNumbers playerNumbers = new SOCPlayerNumbers(board);
         final int[] prob = SOCNumberProbabilities.INT_VALUES;
+        // TreeMap<Integer, Integer> coordScoreMap = new TreeMap<>();
 
-        for (int i = 0; i < branchNodes.size(); i++){
+
+
+        int[] boardResourceQuantity = estimateResourceRarity(); // 0-Brick, 1-Ore, 2-Sheep, 3-Wheat, 4-Wood 
+        TreeMap<Integer,Integer> scarcityScore = new TreeMap<>();
+        scarcityScore.put(0,(boardResourceQuantity[0])/2);
+        scarcityScore.put(1,(boardResourceQuantity[1])/3);
+        scarcityScore.put(2,(boardResourceQuantity[2])/2);
+        scarcityScore.put(3,(boardResourceQuantity[3])/4);
+        scarcityScore.put(4,(boardResourceQuantity[4])/2);
+        
+    
+        int probTotal = playerNumbers.updateNumbersAndProbability(node, board, prob, null);
+        Integer coordScore = 0;
+        coordScore = coordScore + probTotal;
+
+
+        List<Integer> hexes = board.getAdjacentHexesToNode(node);
+        List<Integer> hexType = new ArrayList<>();
+        List<Integer> hexNumber = new ArrayList<>();
+        Set<Integer> typeSet = new HashSet <Integer>();
+        TreeMap<Integer,Pair<Integer,Integer>> fullHexMap = new TreeMap<>();
+        int[] resourceScore = {0,0,0,0,0};
+        for (int j = 0; j < hexes.size(); j++){
+            hexType.add(board.getHexTypeFromCoord(hexes.get(j)));
+            hexNumber.add(board.getHexNumFromCoord(hexes.get(j)));
+            fullHexMap.put(hexes.get(j), new Pair<Integer,Integer> (hexType.get(j),hexNumber.get(j)));
+            typeSet.add(j);
+            if (hexType.get(j) == 0){
+                resourceScore[0] = resourceScore[0] + hexNumber.get(j);
+            }
+            else if (hexType.get(j) == 1){
+                resourceScore[1] = resourceScore[1] + hexNumber.get(j);
+            }
+            else if (hexType.get(j) == 2){
+                resourceScore[2] = resourceScore[2] + hexNumber.get(j);
+            }
+            else if (hexType.get(j) == 3){
+                resourceScore[3] = resourceScore[3] + hexNumber.get(j);
+            }
+            else if (hexType.get(j) == 4){
+                resourceScore[4] = resourceScore[4] + hexNumber.get(j);
+            }
+        }
+        coordScore = coordScore + 3*typeSet.size();
+        for (int j = 0; j < hexes.size(); j++){
+            if (scarcityScore.get(j)/2.5 < (int)Array.get(resourceScore ,j)){
+                coordScore = coordScore + 6;
+            }
+        }
+
+        Pair<Integer,Integer> coordScorePair = new Pair<Integer,Integer>(node, coordScore);
+        return coordScore;
+    }
+
+
+    public List<List<Integer>> multiNodeScoreFunction (List<List<Integer>> branchNodes, int BSBturn){
+
+        int branch = BSBRobotBrain.branch - 1;
+
+        SOCBoard board = game.getBoard();
+        SOCPlayerNumbers playerNumbers = new SOCPlayerNumbers(board);
+        final int[] prob = SOCNumberProbabilities.INT_VALUES;
+        TreeMap<Integer,Integer> BSBVersusScore = new TreeMap<Integer,Integer>();
+        TreeMap<Integer,List<Integer>> BSBVersusBranch = new TreeMap<Integer,List<Integer>>();
+        Integer opponentBranchScore = 0;
+        int BSBNode = 0;
+        int BSBNodeScore = 0;
+
+        for (Integer i = 0; i < branchNodes.size(); i++){
             List<Integer> currentBranch = new ArrayList<>();
-            
+            Integer currentBranchValue = 0; 
             currentBranch.addAll(branchNodes.get(i));
-
-            TreeMap<Integer,Integer> branchTreeMap = singleNodeExploration(currentBranch); 
+            for (int j = 0; j < currentBranch.size(); j++){
+                currentBranchValue = realSingleNodeEvaluation(currentBranch.get(j));
+                if (j + 1 == BSBturn){
+                    BSBNode = currentBranch.get(j);
+                    BSBNodeScore = currentBranchValue;
+                }
+                if (j == currentBranch.size()){
+                    opponentBranchScore = (currentBranchValue);
+                }
+            }
 
             
+
+            
+            BSBNodeScore = BSBNodeScore - opponentBranchScore;
+            BSBVersusScore.put(i, BSBNodeScore);
+            BSBVersusBranch.put(i, currentBranch);
+            soc.debug.D.ebugPrintlnINFO(i.toString());
+            soc.debug.D.ebugPrintlnINFO(currentBranch.toString());
+        }
+        TreeMap<Integer,Integer> BSBFinalScoreMap = valueSort(BSBVersusScore);
+
+        List<Integer> keyList = new ArrayList<>(BSBFinalScoreMap.keySet());
+        // soc.debug.D.ebugPrintlnINFO("keyList size = "+ keyList.size()+ " -- keyList[width] = " + keyList.get(width));
+
+
+
+
+        Map<Integer, Integer> subMap = new TreeMap<>(BSBFinalScoreMap.headMap(keyList.get(branch)));
+        List<Integer> subKeyList = new ArrayList<>(subMap.keySet());
+
+        List<List<Integer>> BSBFinalBranch = new ArrayList<List<Integer>>();
+
+        for (int i = 0; i < subKeyList.size(); i ++){
+            BSBFinalBranch.add(BSBVersusBranch.get(subKeyList.get(i)));
         }
 
 
-        
-        return
+        // Get a set of the entries on the sorted map
+        Set<Map.Entry<Integer, Integer>> setI = BSBFinalScoreMap.entrySet();
+
+        // Get an iterator
+        Iterator<Map.Entry<Integer, Integer>> iI = setI.iterator();
+
+        while (iI.hasNext())
+        {
+            Map.Entry<Integer, Integer> mpI = (Map.Entry<Integer, Integer>)iI.next();
+
+            soc.debug.D.ebugPrintlnINFO(mpI.getKey() + ": "+ (String.valueOf(mpI.getValue()))); 
+
+        }
+        // Integer maxKey = keyList.get(0);
+        // soc.debug.D.ebugPrintlnINFO(maxKey.toString());
+
+        soc.debug.D.ebugPrintlnINFO(BSBFinalBranch.toString());
+
+        return BSBFinalBranch;
     }
 
     public List<List <Integer>> branchSelector(TreeMap<Integer, Integer> sortedTreeMap){
@@ -1179,20 +1415,21 @@ public class OpeningBuildStrategy {
         // {
         //     Map.Entry<Integer, Integer> mpI = (Map.Entry<Integer, Integer>)iI.next();
 
-        //     soc.debug.D.ebugPrintlnINFO(mpI.getKey() + ": "+ (String.valueOf(mpI.getValue())));   
-        // }
-
-
-        List<List <Integer>> NodesForBranch = branchSelector(SortedNodeScoreMap);
-
+        //     soc.debug.D.ebugPrintlnINFO(mpI.getKey() + ": "+ (String.
         BBTurn = BSBTurn + 1;
 
-        List<List<Integer>> opponentResponseLists = nodesForAnalysis3(sortedBoardMap, NodesForBranch);
+        List<List<Integer>> nodesForBranch = branchSelector(SortedNodeScoreMap);
+
+        List<List<Integer>> opponentResponseLists = nodesForAnalysis3(sortedBoardMap, nodesForBranch);
+
+        List<List<Integer>> newBranchList = fullNodeAnalysis(sortedBoardMap, nodesForBranch);
+
+        soc.debug.D.ebugPrintlnINFO("new branch list"+ newBranchList.toString());
         
-        
+        // multiNodeScoreFunction(opponentResponseLists, 1);
 
         
-       return BBTurn;
+        return BBTurn;
     }
 
     /**
