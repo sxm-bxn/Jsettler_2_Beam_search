@@ -722,6 +722,9 @@ public abstract class SOCMessage implements Serializable, Cloneable
      */
     public static SOCMessage toMsg(String s)
     {
+        if (s != null && s.startsWith("1109"))
+            System.out.println("DEBUG: SOCMessage.toMsg() received EXTRANUM message: " + s);
+        
         try
         {
             StringTokenizer st = new StringTokenizer(s, sep);
