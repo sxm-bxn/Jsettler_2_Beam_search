@@ -1394,6 +1394,13 @@ public class SOCGame implements Serializable, Cloneable
         // TODO: Consider refactor to create lastActionType instead, it's more general
 
     /**
+     * Tracks each settlement placement in chronological order.
+     * Stores the coordinate of each settlement placed.
+     * @since 2.7.00
+     */
+    private List<Integer> settlementCoordsHistoryList = new ArrayList<>();
+
+    /**
      * Has the current player moved a ship already this turn?
      * Valid only when {@link #hasSeaBoard}.
      * @since 2.0.00
@@ -4030,6 +4037,11 @@ public class SOCGame implements Serializable, Cloneable
          */
         final int pieceType = pp.getType();
         final SOCPlayer ppPlayer = pp.getPlayer();
+
+        // Track only settlement piece placements
+        if (pieceType == SOCPlayingPiece.SETTLEMENT)
+            settlementCoordsHistoryList.add(coord);
+
         if (pieceType == SOCPlayingPiece.CITY)
         {
             if (! (isTempPiece || hasBuiltCity))
@@ -4255,6 +4267,29 @@ public class SOCGame implements Serializable, Cloneable
 
         if (oldNewGS != null)
             oldNewGS[1] = gameState;
+    }
+
+    /**
+     * Print the putPieceCommon call history in chronological order.
+     * Shows all coordinates of pieces placed in order.
+     * @since 2.7.00
+     */
+    public void printSettlementCoordsHistoryList()
+    {
+        System.out.println("\n=== Settlement Coordinates History ===");
+        System.out.println("Total calls: " + settlementCoordsHistoryList.size());
+        System.out.println(settlementCoordsHistoryList);
+        System.out.println("===================================\n");
+    }
+
+    /**
+     * Get the list of settlement coordinates from history.
+     * @return List of coordinate values where settlements were placed
+     * @since 2.7.00
+     */
+    public List<Integer> getSettlementCoordsHistoryList()
+    {
+        return settlementCoordsHistoryList;
     }
 
     /**

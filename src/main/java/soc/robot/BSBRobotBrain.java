@@ -214,6 +214,10 @@ public class BSBRobotBrain extends SOCRobotBrain{
 
         case SOCGame.START1A:
             {
+                // Access settlement coords history from SOCGame
+                List<Integer> settlementCoords = game.getSettlementCoordsHistoryList();
+                soc.debug.D.ebugPrintlnINFO("settlementCoordsHistoryList: " + settlementCoords);
+
                 if ((! waitingForOurTurn) && ourTurn && (! (expectPUTPIECE_FROM_START1A && (counter < 4000))))
                 {
                     final int firstSettleNode = openingBuildStrategy.planInitialSettlements();
