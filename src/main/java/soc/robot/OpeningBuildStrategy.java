@@ -1462,7 +1462,7 @@ public class OpeningBuildStrategy {
 
             int currentNodeScore =  pairNodeEvaluation(nodePair);
             settlementScoreArray[i] = currentNodeScore;
-            game.setExtraNum(i, currentNodeScore);
+            game.setExtraNum(i+1, currentNodeScore);
         }
         
         return;

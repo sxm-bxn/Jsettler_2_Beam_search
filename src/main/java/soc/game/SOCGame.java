@@ -1871,13 +1871,13 @@ public class SOCGame implements Serializable, Cloneable
         if ((which < 1) || (which > 4))
             throw new IllegalArgumentException("which");
 
-        return extraNums[which - 1];
+        return extraNums[which];
     }
 
     /**
      * Set one of 4 extra numeric values for this game.
      *
-     * @param which Which value to set, numbered {@code 1..4}
+     * @param which The order that the player is. (i.e. firt player is 1, second player is 2, etc.)
      * @param value New value for that slot
      * @throws IllegalArgumentException if {@code which} is outside {@code 1..4}
      */
@@ -1887,7 +1887,11 @@ public class SOCGame implements Serializable, Cloneable
         if ((which < 1) || (which > 4))
             throw new IllegalArgumentException("which");
 
-        extraNums[which - 1] = value;
+
+        int saveAt = firstPlayerNumber + which - 1;
+        if (saveAt >= maxPlayers)
+            saveAt -= maxPlayers;
+        extraNums[saveAt] = value;
     }
 
     /**

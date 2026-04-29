@@ -666,7 +666,7 @@ public class SOCDBHelper
      * @since 2.0.00
      */
     private static final String SAVE_GAME_PLAYER_COMMAND =
-        "INSERT INTO games2_players(gameid,player,score,extranum1,extranum2,extranum3,extranum4) VALUES (?,?,?,?,?,?,?);";
+        "INSERT INTO games2_players(gameid,player,score,extranum1) VALUES (?,?,?,?);";
 
     private static final String ROBOT_PARAMS_QUERY = "SELECT * FROM robotparams WHERE robotname = ?;";
     private static final String USER_COUNT_QUERY = "SELECT count(*) FROM users;";
@@ -2082,10 +2082,6 @@ public class SOCDBHelper
                         // Per-player scores:
 
                         boolean hadAnyPlayers = false;
-                        final int extraNum1 = ga.getExtraNum(1);
-                        final int extraNum2 = ga.getExtraNum(2);
-                        final int extraNum3 = ga.getExtraNum(3);
-                        final int extraNum4 = ga.getExtraNum(4);
                         saveGamePlayerCommand.clearBatch();
                         for (int pn = 0; pn < ga.maxPlayers; ++pn)
                         {
@@ -2093,6 +2089,7 @@ public class SOCDBHelper
                                 continue;
                             final String plName = names[pn];
                             final int plScore = scores[pn];
+                            final int extraNum1 = getExtraNum(pn);
                             if ((plScore == 0) || (plName == null) || plName.isEmpty())
                                 continue;  // initial settlements give starting score of 2: no one would have 0 at game end
 
@@ -2101,9 +2098,6 @@ public class SOCDBHelper
                             saveGamePlayerCommand.setString(2, plName);
                             saveGamePlayerCommand.setInt(3, plScore);
                             saveGamePlayerCommand.setInt(4, extraNum1);
-                            saveGamePlayerCommand.setInt(5, extraNum2);
-                            saveGamePlayerCommand.setInt(6, extraNum3);
-                            saveGamePlayerCommand.setInt(7, extraNum4);
                             saveGamePlayerCommand.addBatch();
                         }
                         if (hadAnyPlayers)
