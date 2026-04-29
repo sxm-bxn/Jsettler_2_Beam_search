@@ -36,6 +36,8 @@ import soc.util.IntPair;
 import soc.util.SOCFeatureSet;
 import soc.util.SOCGameBoardReset;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -1871,7 +1873,7 @@ public class SOCGame implements Serializable, Cloneable
         if ((which < 0) || (which > 4))
             throw new IllegalArgumentException("which");
 
-        System.out.println("DEBUG: getExtraNum(" + which + ") BEFORE: extraNums=" + java.util.Arrays.toString(extraNums));
+        System.out.println("DEBUG: getExtraNum(" + which + ") BEFORE: extraNums=" + java.util.Arrays.toString(extraNums) + " [objID=" + System.identityHashCode(this) + "]");
         return extraNums[which];
     }
 
@@ -1888,13 +1890,13 @@ public class SOCGame implements Serializable, Cloneable
         if ((which < 1) || (which > 4))
             throw new IllegalArgumentException("which");
 
-        System.out.println("DEBUG: setExtraNum(" + which + ", " + value + ") BEFORE: extraNums=" + java.util.Arrays.toString(extraNums));
+        System.out.println("DEBUG: setExtraNum(" + which + ", " + value + ") BEFORE: extraNums=" + java.util.Arrays.toString(extraNums) + " [objID=" + System.identityHashCode(this) + "]");
 
         int saveAt = firstPlayerNumber + which - 1;
         if (saveAt >= maxPlayers)
             saveAt -= maxPlayers;
         extraNums[saveAt] = value;
-        System.out.println("DEBUG: setExtraNum(" + which + ", " + value + ") AFTER at index " + saveAt + ": extraNums=" + java.util.Arrays.toString(extraNums));
+        System.out.println("DEBUG: setExtraNum(" + which + ", " + value + ") AFTER at index " + saveAt + ": extraNums=" + java.util.Arrays.toString(extraNums) + " [objID=" + System.identityHashCode(this) + "]");
     }
 
     /**
@@ -10684,6 +10686,37 @@ public class SOCGame implements Serializable, Cloneable
     public String toString()
     {
         return "SOCGame{" + name + "}";
+    }
+
+    /**
+     * Custom serialization to preserve {@link #extraNums} during serialize/deserialize.
+     * Called automatically during {@code ObjectOutputStream.writeObject()}.
+     *
+     * @param oos the ObjectOutputStream to write to
+     * @throws java.io.IOException if an I/O error occurs
+     */
+    private void writeObject(ObjectOutputStream oos)
+        throws java.io.IOException
+    {
+        oos.defaultWriteObject();
+        oos.writeObject(extraNums);
+    }
+
+    /**
+     * Custom deserialization to restore {@link #extraNums} after deserialize.
+     * Called automatically during {@code ObjectInputStream.readObject()}.
+     *
+     * @param ois the ObjectInputStream to read from
+     * @throws java.io.IOException if an I/O error occurs
+     * @throws ClassNotFoundException if a class cannot be found
+     */
+    private void readObject(ObjectInputStream ois)
+        throws java.io.IOException, ClassNotFoundException
+    {
+        ois.defaultReadObject();
+        extraNums = (int[]) ois.readObject();
+        if (extraNums == null)
+            extraNums = new int[4];
     }
 
     /**
