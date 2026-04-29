@@ -98,7 +98,7 @@ public class SOCExtraNum extends SOCMessage
      */
     public static String toCmd(String ga, int n1, int n2, int n3, int n4)
     {
-        return "EXTRANUM" + sep + ga + sep + n1 + sep + n2 + sep + n3 + sep + n4;
+        return EXTRANUM + sep + ga + sep + n1 + sep + n2 + sep + n3 + sep + n4;
     }
 
     /**
@@ -109,20 +109,26 @@ public class SOCExtraNum extends SOCMessage
      */
     public static SOCExtraNum parseDataStr(String s)
     {
+        System.out.println("DEBUG: SOCExtraNum.parseDataStr() called with: " + s);
+        
         String ga;
         int n1, n2, n3, n4;
 
         try
         {
             String[] sa = s.split(sep);
+            System.out.println("DEBUG: parseDataStr split into " + sa.length + " parts");
             ga = sa[0];
             n1 = Integer.parseInt(sa[1]);
             n2 = Integer.parseInt(sa[2]);
             n3 = Integer.parseInt(sa[3]);
             n4 = Integer.parseInt(sa[4]);
+            System.out.println("DEBUG: parseDataStr successfully parsed: game=" + ga + " nums=[" + n1 + "," + n2 + "," + n3 + "," + n4 + "]");
         }
         catch (Exception e)
         {
+            System.out.println("DEBUG: parseDataStr FAILED: " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
 
