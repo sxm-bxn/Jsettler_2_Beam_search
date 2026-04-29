@@ -1394,11 +1394,11 @@ public class SOCGame implements Serializable, Cloneable
         // TODO: Consider refactor to create lastActionType instead, it's more general
 
     /**
-     * Tracks each call to putPieceCommon in chronological order.
-     * Stores the coordinate of each piece placed.
+     * Tracks each settlement placement in chronological order.
+     * Stores the coordinate of each settlement placed.
      * @since 2.7.00
      */
-    private List<Integer> putPieceCommonCallHistory = new ArrayList<>();
+    private List<Integer> settlementCoordsHistoryList = new ArrayList<>();
 
     /**
      * Has the current player moved a ship already this turn?
@@ -4040,7 +4040,7 @@ public class SOCGame implements Serializable, Cloneable
 
         // Track only settlement piece placements
         if (pieceType == SOCPlayingPiece.SETTLEMENT)
-            putPieceCommonCallHistory.add(coord);
+            settlementCoordsHistoryList.add(coord);
 
         if (pieceType == SOCPlayingPiece.CITY)
         {
@@ -4274,22 +4274,22 @@ public class SOCGame implements Serializable, Cloneable
      * Shows all coordinates of pieces placed in order.
      * @since 2.7.00
      */
-    public void printPutPieceCommonHistory()
+    public void printSettlementCoordsHistoryList()
     {
-        System.out.println("\n=== putPieceCommon Coordinates ===");
-        System.out.println("Total calls: " + putPieceCommonCallHistory.size());
-        System.out.println(putPieceCommonCallHistory);
+        System.out.println("\n=== Settlement Coordinates History ===");
+        System.out.println("Total calls: " + settlementCoordsHistoryList.size());
+        System.out.println(settlementCoordsHistoryList);
         System.out.println("===================================\n");
     }
 
     /**
-     * Get the list of settlement coordinates from putPieceCommon history.
+     * Get the list of settlement coordinates from history.
      * @return List of coordinate values where settlements were placed
      * @since 2.7.00
      */
-    public List<Integer> getPutPieceCommonHistory()
+    public List<Integer> getSettlementCoordsHistoryList()
     {
-        return putPieceCommonCallHistory;
+        return settlementCoordsHistoryList;
     }
 
     /**

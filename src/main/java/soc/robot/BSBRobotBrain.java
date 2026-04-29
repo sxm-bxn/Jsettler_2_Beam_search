@@ -214,9 +214,9 @@ public class BSBRobotBrain extends SOCRobotBrain{
 
         case SOCGame.START1A:
             {
-                // Access putPieceCommonCallHistory from SOCGame
-                List<Integer> settlementCoords = game.getPutPieceCommonHistory();
-                soc.debug.D.ebugPrintlnINFO("putPieceCommonCallHistory: " + settlementCoords);
+                // Access settlement coords history from SOCGame
+                List<Integer> settlementCoords = game.getSettlementCoordsHistoryList();
+                soc.debug.D.ebugPrintlnINFO("settlementCoordsHistoryList: " + settlementCoords);
 
                 if ((! waitingForOurTurn) && ourTurn && (! (expectPUTPIECE_FROM_START1A && (counter < 4000))))
                 {
