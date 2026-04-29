@@ -955,11 +955,11 @@ public class OpeningBuildStrategy {
 
 
 
-     public List<List<Integer>> fullNodeAnalysis(TreeMap<Integer, Integer> sortedMap, List<List<Integer>> plannedSettlementList){
+    public List<List<Integer>> fullNodeAnalysis(TreeMap<Integer, Integer> sortedMap, List<List<Integer>> plannedSettlementList){
         
         int width = BSBRobotBrain.width; 
         int branch = BSBRobotBrain.branch;
-        int branchNodeSize = plannedSettlementList.size()/branch;
+
         soc.debug.D.ebugPrintlnINFO("--FullNodeAnalysis-started--");
         final SOCBoard board = game.getBoard();
         boolean foundNode = true;
@@ -1035,7 +1035,7 @@ public class OpeningBuildStrategy {
         while (branchNodesList.size() < branch){
             
             
-            if (mapped == false){
+            if (!mapped) {
                 for (int x = 0; x <  plannedSettlementList.size(); x++ ){
                     TreeMap<Integer, Integer> innerMap = fullBranchScoreMap.get(x);
                     Set<Map.Entry<Integer, Integer>> setI = innerMap.entrySet();
