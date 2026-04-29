@@ -2089,7 +2089,9 @@ public class SOCDBHelper
                                 continue;
                             final String plName = names[pn];
                             final int plScore = scores[pn];
-                            final int extraNum1 = ga.getExtraNum(pn);
+                            // Convert player number to turn order (1-4) for getExtraNum
+                            final int turnOrder = (pn - ga.getFirstPlayer() + ga.maxPlayers) % ga.maxPlayers + 1;
+                            final int extraNum1 = ga.getExtraNum(turnOrder);
                             if ((plScore == 0) || (plName == null) || plName.isEmpty())
                                 continue;  // initial settlements give starting score of 2: no one would have 0 at game end
 

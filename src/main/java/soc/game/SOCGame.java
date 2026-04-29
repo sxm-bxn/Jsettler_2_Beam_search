@@ -1863,18 +1863,22 @@ public class SOCGame implements Serializable, Cloneable
     /**
      * Get one of 4 extra numeric values for this game.
      *
-     * @param which Which value to get, numbered {@code 1..4}
+     * @param which Which value to get, numbered {@code 1..4} for player turn order
      * @return Stored value for that slot
      * @throws IllegalArgumentException if {@code which} is outside {@code 1..4}
      */
     public int getExtraNum(final int which)
         throws IllegalArgumentException
     {
-        if ((which < 0) || (which > 4))
+        if ((which < 1) || (which > 4))
             throw new IllegalArgumentException("which");
 
+        int getAt = firstPlayerNumber + which - 1;
+        if (getAt >= maxPlayers)
+            getAt -= maxPlayers;
+
         System.out.println("DEBUG: getExtraNum(" + which + ") BEFORE: extraNums=" + java.util.Arrays.toString(extraNums) + " [objID=" + System.identityHashCode(this) + "]");
-        return extraNums[which];
+        return extraNums[getAt];
     }
 
     /**
