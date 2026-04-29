@@ -2089,7 +2089,7 @@ public class SOCDBHelper
                                 continue;
                             final String plName = names[pn];
                             final int plScore = scores[pn];
-                            final int extraNum1 = getExtraNum(pn);
+                            final int extraNum1 = ga.getExtraNum(pn);
                             if ((plScore == 0) || (plName == null) || plName.isEmpty())
                                 continue;  // initial settlements give starting score of 2: no one would have 0 at game end
 
