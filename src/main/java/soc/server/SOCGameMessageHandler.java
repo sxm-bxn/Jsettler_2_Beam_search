@@ -3115,6 +3115,10 @@ public class SOCGameMessageHandler
      */
     private void handleEXTRANUM(final SOCGame ga, final Connection c, final SOCExtraNum mes)
     {
+        System.out.println("DEBUG: Server received EXTRANUM message for game " + ga.getName() + 
+                         " with values [" + mes.getNums()[0] + ", " + mes.getNums()[1] + 
+                         ", " + mes.getNums()[2] + ", " + mes.getNums()[3] + "]");
+        
         ga.takeMonitor();
         try
         {
@@ -3124,7 +3128,7 @@ public class SOCGameMessageHandler
             ga.setExtraNum(3, nums[2]);
             ga.setExtraNum(4, nums[3]);
             
-            System.out.println("DEBUG: Server received extraNums from client: [" + nums[0] + ", " + nums[1] + ", " + nums[2] + ", " + nums[3] + "]");
+            System.out.println("DEBUG: Server updated extraNums on game object [objID=" + System.identityHashCode(ga) + "]");
         } finally {
             ga.releaseMonitor();
         }

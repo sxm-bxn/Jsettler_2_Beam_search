@@ -1497,7 +1497,10 @@ public class OpeningBuildStrategy {
             int n4 = game.getExtraNum(4);
             
             SOCExtraNum msg = new SOCExtraNum(game.getName(), n1, n2, n3, n4);
-            robotBrain.client.put(msg.toCmd());
+            String cmd = msg.toCmd();
+            System.out.println("DEBUG: syncExtraNumsToServer() sending message: " + cmd);
+            robotBrain.client.put(cmd);
+            System.out.println("DEBUG: syncExtraNumsToServer() message sent successfully");
         }
         catch (Exception e)
         {
