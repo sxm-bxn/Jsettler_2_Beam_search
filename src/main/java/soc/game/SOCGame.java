@@ -1394,6 +1394,13 @@ public class SOCGame implements Serializable, Cloneable
         // TODO: Consider refactor to create lastActionType instead, it's more general
 
     /**
+     * Tracks each call to putPieceCommon in chronological order.
+     * Stores the coordinate of each piece placed.
+     * @since 2.7.00
+     */
+    private List<Integer> putPieceCommonCallHistory = new ArrayList<>();
+
+    /**
      * Has the current player moved a ship already this turn?
      * Valid only when {@link #hasSeaBoard}.
      * @since 2.0.00
@@ -3966,6 +3973,9 @@ public class SOCGame implements Serializable, Cloneable
         lastAction = null;
             // clear previous, in case a side effect like putPieceCommon_checkFogHexes will call setLastActionCannotUndo
 
+        // Track this putPieceCommon call in chronological order
+        putPieceCommonCallHistory.add(coord);
+
         /**
          * FOG_HEX: On large board, look for fog and reveal its hex if we're
          * placing a road or ship touching the fog hex's corner.
@@ -4255,6 +4265,19 @@ public class SOCGame implements Serializable, Cloneable
 
         if (oldNewGS != null)
             oldNewGS[1] = gameState;
+    }
+
+    /**
+     * Print the putPieceCommon call history in chronological order.
+     * Shows all coordinates of pieces placed in order.
+     * @since 2.7.00
+     */
+    public void printPutPieceCommonHistory()
+    {
+        System.out.println("\n=== putPieceCommon Coordinates ===");
+        System.out.println("Total calls: " + putPieceCommonCallHistory.size());
+        System.out.println(putPieceCommonCallHistory);
+        System.out.println("===================================\n");
     }
 
     /**
