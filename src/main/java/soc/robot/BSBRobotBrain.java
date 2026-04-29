@@ -129,6 +129,11 @@ public class BSBRobotBrain extends SOCRobotBrain{
                 client.putPiece(game, whatWeWantToBuild);
                 pause(1000);
             }
+            int settlementCount = game.getSettlementCoordsHistoryList().size();
+            if (settlementCount == 8){
+                openingBuildStrategy.initialSettlementScores();
+            }
+
             break;
 
         case SOCGame.PLACING_ROAD:
@@ -221,11 +226,12 @@ public class BSBRobotBrain extends SOCRobotBrain{
                 if ((! waitingForOurTurn) && ourTurn && (! (expectPUTPIECE_FROM_START1A && (counter < 4000))))
                 {
                     final int firstSettleNode = openingBuildStrategy.planInitialSettlements();
-                    placeFirstSettlement(firstSettleNode);
+                    
                     soc.debug.D.ebugPrintlnINFO("------------normal choice---" + firstSettleNode+ "-------------------------");
-                    final int beamSearchNode = openingBuildStrategy.BeamSearchFull(SOCPlacementCount);
+                    final int beamSearchNode = openingBuildStrategy.BeamSearchFull(settlementCoords);
 
                     soc.debug.D.ebugPrintlnINFO("------------normal choice---" + beamSearchNode + "-------------------------");
+                    placeFirstSettlement(beamSearchNode);
                     SOCPlacementCount = SOCPlacementCount + 1;
                     expectPUTPIECE_FROM_START1A = true;
                     waitingForGameState = true;
@@ -255,10 +261,18 @@ public class BSBRobotBrain extends SOCRobotBrain{
             break;
 
         case SOCGame.START2A:
-            {
+            {   
+                // Access settlement coords history from SOCGame
+                List<Integer> settlementCoords = game.getSettlementCoordsHistoryList();
+                soc.debug.D.ebugPrintlnINFO("settlementCoordsHistoryList: " + settlementCoords);
+
                 if ((! waitingForOurTurn) && ourTurn && (! (expectPUTPIECE_FROM_START2A && (counter < 4000))))
                 {
                     final int secondSettleNode = openingBuildStrategy.planSecondSettlement();
+
+                    final int beamSearchNode = openingBuildStrategy.BeamSearchFull(settlementCoords);
+
+                    soc.debug.D.ebugPrintlnINFO("------------normal choice---" + beamSearchNode + "-------------------------");
                     placeInitSettlement(secondSettleNode);
 
                     expectPUTPIECE_FROM_START2A = true;

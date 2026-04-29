@@ -28,7 +28,9 @@ import soc.disableDebug.D;
 import soc.game.GameAction.ActionType;
 import soc.game.GameAction.EffectType;
 import soc.message.SOCMessage;  // For static calls only; SOCGame does not interact with network messages
+import soc.robot.OpeningBuildStrategy;
 import soc.server.SOCBoardAtServer;  // For calling server-only methods like distributeClothFromRoll
+import soc.server.genericServer.StringConnection;
 import soc.util.DataUtils;
 import soc.util.IntPair;
 import soc.util.SOCFeatureSet;
@@ -4327,6 +4329,7 @@ public class SOCGame implements Serializable, Cloneable
      */
     public List<Integer> getSettlementCoordsHistoryList()
     {
+       
         return settlementCoordsHistoryList;
     }
 
