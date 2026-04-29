@@ -98,7 +98,7 @@ public class SOCExtraNum extends SOCMessage
      */
     public static String toCmd(String ga, int n1, int n2, int n3, int n4)
     {
-        return EXTRANUM + sep + ga + sep + n1 + sep + n2 + sep + n3 + sep + n4;
+        return "EXTRANUM" + sep + ga + sep + n1 + sep + n2 + sep + n3 + sep + n4;
     }
 
     /**
