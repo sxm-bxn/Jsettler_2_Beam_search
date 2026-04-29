@@ -3973,9 +3973,6 @@ public class SOCGame implements Serializable, Cloneable
         lastAction = null;
             // clear previous, in case a side effect like putPieceCommon_checkFogHexes will call setLastActionCannotUndo
 
-        // Track this putPieceCommon call in chronological order
-        putPieceCommonCallHistory.add(coord);
-
         /**
          * FOG_HEX: On large board, look for fog and reveal its hex if we're
          * placing a road or ship touching the fog hex's corner.
@@ -4040,6 +4037,11 @@ public class SOCGame implements Serializable, Cloneable
          */
         final int pieceType = pp.getType();
         final SOCPlayer ppPlayer = pp.getPlayer();
+
+        // Track only settlement piece placements
+        if (pieceType == SOCPlayingPiece.SETTLEMENT)
+            putPieceCommonCallHistory.add(coord);
+
         if (pieceType == SOCPlayingPiece.CITY)
         {
             if (! (isTempPiece || hasBuiltCity))
