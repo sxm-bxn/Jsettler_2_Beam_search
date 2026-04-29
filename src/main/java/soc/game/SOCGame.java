@@ -4283,6 +4283,16 @@ public class SOCGame implements Serializable, Cloneable
     }
 
     /**
+     * Get the list of settlement coordinates from putPieceCommon history.
+     * @return List of coordinate values where settlements were placed
+     * @since 2.7.00
+     */
+    public List<Integer> getPutPieceCommonHistory()
+    {
+        return putPieceCommonCallHistory;
+    }
+
+    /**
      * On the large sea board, look for and reveal any adjacent fog hex,
      * if we're placing a road or ship touching the fog hex's corner node.
      * Reveal it before placing the new piece, so it's easier for
