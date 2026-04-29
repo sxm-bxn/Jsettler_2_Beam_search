@@ -1064,6 +1064,12 @@ public class SOCGame implements Serializable, Cloneable
     private SeatLockState[] seatLocks;
 
     /**
+     * Optional extra numeric values for experiments or custom tracking.
+     * Indexed by {@code 1..4} through {@link #getExtraNum(int)} and {@link #setExtraNum(int, int)}.
+     */
+    private final int[] extraNums = new int[4];
+
+    /**
      * The seat number of the current player within {@link #players}[],
      * or -1 if the game isn't started yet.
      * @see #specialBuildPhase_afterPlayerNumber
@@ -1848,6 +1854,38 @@ public class SOCGame implements Serializable, Cloneable
             throw new IllegalStateException("Not over: state " + gameState);
 
         finalDurationSeconds = durSeconds;
+    }
+
+    /**
+     * Get one of 4 extra numeric values for this game.
+     *
+     * @param which Which value to get, numbered {@code 1..4}
+     * @return Stored value for that slot
+     * @throws IllegalArgumentException if {@code which} is outside {@code 1..4}
+     */
+    public int getExtraNum(final int which)
+        throws IllegalArgumentException
+    {
+        if ((which < 1) || (which > 4))
+            throw new IllegalArgumentException("which");
+
+        return extraNums[which - 1];
+    }
+
+    /**
+     * Set one of 4 extra numeric values for this game.
+     *
+     * @param which Which value to set, numbered {@code 1..4}
+     * @param value New value for that slot
+     * @throws IllegalArgumentException if {@code which} is outside {@code 1..4}
+     */
+    public void setExtraNum(final int which, final int value)
+        throws IllegalArgumentException
+    {
+        if ((which < 1) || (which > 4))
+            throw new IllegalArgumentException("which");
+
+        extraNums[which - 1] = value;
     }
 
     /**

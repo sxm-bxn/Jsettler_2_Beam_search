@@ -109,6 +109,10 @@ CREATE TABLE games2_players (
 	gameid INT not null,
 	player VARCHAR(20) not null,
 	score SMALLINT not null,
+	extranum1 INT not null default 0,
+	extranum2 INT not null default 0,
+	extranum3 INT not null default 0,
+	extranum4 INT not null default 0,
 	PRIMARY KEY(gameid, player)
 	);
 
