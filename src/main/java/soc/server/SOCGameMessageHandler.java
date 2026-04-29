@@ -377,6 +377,14 @@ public class SOCGameMessageHandler
             break;
 
         /**
+         * Sync extra numeric values from client to server.
+         * Added for v2.7.00.
+         */
+        case SOCMessage.EXTRANUM:
+            handleEXTRANUM(game, connection, (SOCExtraNum) message);
+            break;
+
+        /**
          * Ignore all other message types, unknown message types.
          */
         default:
@@ -3090,6 +3098,33 @@ public class SOCGameMessageHandler
                 srv.messageToGame
                     (gaName, true, new SOCGameState(gaName, ga.getGameState()));
             }
+        } finally {
+            ga.releaseMonitor();
+        }
+    }
+
+    /**
+     * Handle "sync extra numbers" message from client.
+     * Updates the server's game object with the extra numeric values
+     * calculated by the robot client (e.g., settlement scores).
+     *
+     * @param ga  the game
+     * @param c   the connection that sent the message
+     * @param mes the message
+     * @since 2.7.00
+     */
+    private void handleEXTRANUM(final SOCGame ga, final Connection c, final SOCExtraNum mes)
+    {
+        ga.takeMonitor();
+        try
+        {
+            int[] nums = mes.getNums();
+            ga.setExtraNum(1, nums[0]);
+            ga.setExtraNum(2, nums[1]);
+            ga.setExtraNum(3, nums[2]);
+            ga.setExtraNum(4, nums[3]);
+            
+            System.out.println("DEBUG: Server received extraNums from client: [" + nums[0] + ", " + nums[1] + ", " + nums[2] + ", " + nums[3] + "]");
         } finally {
             ga.releaseMonitor();
         }

@@ -49,6 +49,7 @@ import java.lang.reflect.Array;
 
 import soc.disableDebug.D;
 import soc.game.*;
+import soc.message.SOCExtraNum;
 import soc.util.CutoffExceededException;
 
 /**
@@ -64,6 +65,13 @@ public class OpeningBuildStrategy {
 
     /** Our {@link SOCRobotBrain}'s player */
     protected final SOCPlayer ourPlayerData;
+
+    /**
+     * Our robot brain, if available, for sending messages to server.
+     * Null if this OBS is created outside a robot brain context.
+     * @since 2.7.00
+     */
+    protected final SOCRobotBrain robotBrain;
 
     /**
      * Our {@link SOCBuildingSpeedEstimate} factory, from {@link #ourPlayerData}'s brain passed into constructor.
@@ -116,6 +124,7 @@ public class OpeningBuildStrategy {
 
         game = ga;
         ourPlayerData = pl;
+        robotBrain = br;
         bseFactory = (br != null)
             ? br.getEstimatorFactory()
             : new SOCBuildingSpeedEstimateFactory(null);
@@ -1465,7 +1474,36 @@ public class OpeningBuildStrategy {
             game.setExtraNum(i+1, currentNodeScore);
         }
         
+        // Sync extraNums to server
+        syncExtraNumsToServer();
+        
         return;
+    }
+
+    /**
+     * Send extraNums from client game to server game via message.
+     * @since 2.7.00
+     */
+    private void syncExtraNumsToServer()
+    {
+        if (robotBrain == null)
+            return;  // No way to send message if not in robot context
+        
+        try
+        {
+            int n1 = game.getExtraNum(1);
+            int n2 = game.getExtraNum(2);
+            int n3 = game.getExtraNum(3);
+            int n4 = game.getExtraNum(4);
+            
+            SOCExtraNum msg = new SOCExtraNum(game.getName(), n1, n2, n3, n4);
+            robotBrain.client.put(msg.toCmd());
+        }
+        catch (Exception e)
+        {
+            System.err.println("Error syncing extraNums to server: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 

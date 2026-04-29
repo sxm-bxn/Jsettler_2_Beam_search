@@ -494,6 +494,12 @@ public abstract class SOCMessage implements Serializable, Cloneable
      */
     public static final int CHANGEGAMEOPTIONS = 1108;  // for Opportunistic Game Options, 20251227, v2.7.00
 
+    /**
+     * {@link SOCExtraNum} - Sync 4 extra numeric values from client to server game.
+     * @since 2.7.00
+     */
+    public static final int EXTRANUM = 1109;  // Sync extra numbers, 20260429, v2.7.00
+
 
     /////////////////////////////////////////
     // REQUEST FOR FUTURE MESSAGE NUMBERS: //
@@ -1111,6 +1117,9 @@ public abstract class SOCMessage implements Serializable, Cloneable
 
             case CHANGEGAMEOPTIONS:     // for Opportunistic Game Options, 20251227, v2.7.00
                 return SOCChangeGameOptions.parseDataStr(multiData);
+
+            case EXTRANUM:              // Sync extra numbers, 20260429, v2.7.00
+                return SOCExtraNum.parseDataStr(data);
 
             // gametype-specific messages:
 
