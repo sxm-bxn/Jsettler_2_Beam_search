@@ -1069,7 +1069,7 @@ public class SOCGame implements Serializable, Cloneable
      * Optional extra numeric values for experiments or custom tracking.
      * Indexed by {@code 1..4} through {@link #getExtraNum(int)} and {@link #setExtraNum(int, int)}.
      */
-    private final int[] extraNums = new int[4];
+    private int[] extraNums = new int[4];
 
     /**
      * The seat number of the current player within {@link #players}[],
@@ -1868,9 +1868,10 @@ public class SOCGame implements Serializable, Cloneable
     public int getExtraNum(final int which)
         throws IllegalArgumentException
     {
-        if ((which < 1) || (which > 4))
+        if ((which < 0) || (which > 4))
             throw new IllegalArgumentException("which");
 
+        System.out.println("DEBUG: getExtraNum(" + which + ") BEFORE: extraNums=" + java.util.Arrays.toString(extraNums));
         return extraNums[which];
     }
 
@@ -1887,11 +1888,13 @@ public class SOCGame implements Serializable, Cloneable
         if ((which < 1) || (which > 4))
             throw new IllegalArgumentException("which");
 
+        System.out.println("DEBUG: setExtraNum(" + which + ", " + value + ") BEFORE: extraNums=" + java.util.Arrays.toString(extraNums));
 
         int saveAt = firstPlayerNumber + which - 1;
         if (saveAt >= maxPlayers)
             saveAt -= maxPlayers;
         extraNums[saveAt] = value;
+        System.out.println("DEBUG: setExtraNum(" + which + ", " + value + ") AFTER at index " + saveAt + ": extraNums=" + java.util.Arrays.toString(extraNums));
     }
 
     /**
@@ -10168,6 +10171,7 @@ public class SOCGame implements Serializable, Cloneable
         cp.clientVersionLowest = clientVersionLowest;
         cp.clientVersionHighest = clientVersionHighest;
         cp.clientVersionMinRequired = clientVersionMinRequired;
+        cp.extraNums = Arrays.copyOf(extraNums, extraNums.length);
 
         // Per-player state
         for (int i = 0; i < maxPlayers; i++)
