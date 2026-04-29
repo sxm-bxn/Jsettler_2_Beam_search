@@ -2087,9 +2087,12 @@ public class SOCDBHelper
                         {
                             if (ga.isSeatVacant(pn))
                                 continue;
+                             soc.debug.D.ebugPrintlnINFO("pn:"+pn);
                             final String plName = names[pn];
                             final int plScore = scores[pn];
-                            final int extraNum1 = getExtraNum(pn);
+                            final int extraNum1 = 1;
+                            ga.getExtraNum(pn);
+                            soc.debug.D.ebugPrintlnINFO("extra Num:" + extraNum1);
                             if ((plScore == 0) || (plName == null) || plName.isEmpty())
                                 continue;  // initial settlements give starting score of 2: no one would have 0 at game end
 

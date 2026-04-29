@@ -34,10 +34,11 @@ public class RANRobotBrain extends SOCRobotBrain {
                 client.putPiece(game, whatWeWantToBuild);
                 pause(1000);
             }
-            int settlementCount = game.getSettlementCoordsHistoryList().size();
-            if (settlementCount == 8){
-                openingBuildStrategy.initialSettlementScores();
-            }
+            // Integer settlementCount = game.getSettlementCoordsHistoryList().size();
+            // soc.debug.D.ebugPrintINFO(settlementCount.toString());
+            // if (settlementCount == 8){
+            //     openingBuildStrategy.initialSettlementScores();
+            // }
             break;
 
         case SOCGame.PLACING_ROAD:
@@ -171,6 +172,12 @@ public class RANRobotBrain extends SOCRobotBrain {
                 }
 
                 expectSTART2A = false;
+
+                Integer settlementCount = game.getSettlementCoordsHistoryList().size();
+                soc.debug.D.ebugPrintINFO(settlementCount.toString());
+                if (settlementCount == 8){
+                    openingBuildStrategy.initialSettlementScores();
+                }
             }
             break;
 

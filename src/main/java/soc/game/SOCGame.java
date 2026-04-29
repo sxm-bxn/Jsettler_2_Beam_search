@@ -1069,7 +1069,7 @@ public class SOCGame implements Serializable, Cloneable
      * Optional extra numeric values for experiments or custom tracking.
      * Indexed by {@code 1..4} through {@link #getExtraNum(int)} and {@link #setExtraNum(int, int)}.
      */
-    private final int[] extraNums = new int[4];
+    private List<Integer>  extraNums = new ArrayList<>(4);
 
     /**
      * The seat number of the current player within {@link #players}[],
@@ -1868,10 +1868,13 @@ public class SOCGame implements Serializable, Cloneable
     public int getExtraNum(final int which)
         throws IllegalArgumentException
     {
-        if ((which < 1) || (which > 4))
+        if ((which < 0) || (which > 3))
             throw new IllegalArgumentException("which");
-
-        return extraNums[which];
+        soc.debug.D.ebugPrintlnINFO(extraNums.toString());
+        soc.debug.D.ebugPrintlnINFO(this.toString());
+        soc.debug.D.ebugPrintlnINFO("save at:"+ which+ ":");
+        soc.debug.D.ebugPrintlnINFO(""+extraNums.get(which));
+        return extraNums.get(which);
     }
 
     /**
@@ -1891,7 +1894,10 @@ public class SOCGame implements Serializable, Cloneable
         int saveAt = firstPlayerNumber + which - 1;
         if (saveAt >= maxPlayers)
             saveAt -= maxPlayers;
-        extraNums[saveAt] = value;
+        soc.debug.D.ebugPrintlnINFO("save at:"+ saveAt+ ":"+ value);
+        extraNums.add(saveAt, value);
+        soc.debug.D.ebugPrintlnINFO(extraNums.toString());
+        soc.debug.D.ebugPrintlnINFO(this.toString());
     }
 
     /**

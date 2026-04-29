@@ -129,10 +129,11 @@ public class BSBRobotBrain extends SOCRobotBrain{
                 client.putPiece(game, whatWeWantToBuild);
                 pause(1000);
             }
-            int settlementCount = game.getSettlementCoordsHistoryList().size();
-            if (settlementCount == 8){
-                openingBuildStrategy.initialSettlementScores();
-            }
+            // Integer settlementCount = game.getSettlementCoordsHistoryList().size();
+            // soc.debug.D.ebugPrintINFO(settlementCount.toString());
+            // if (settlementCount == 8){
+            //     openingBuildStrategy.initialSettlementScores();
+            // }
 
             break;
 
@@ -300,6 +301,12 @@ public class BSBRobotBrain extends SOCRobotBrain{
                 }
 
                 expectSTART2B = false;
+
+                Integer settlementCount = game.getSettlementCoordsHistoryList().size();
+                soc.debug.D.ebugPrintINFO(settlementCount.toString());
+                if (settlementCount == 8){
+                    openingBuildStrategy.initialSettlementScores();
+                }
             }
             break;
 

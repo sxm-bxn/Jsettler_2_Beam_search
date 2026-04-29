@@ -1452,6 +1452,7 @@ public class OpeningBuildStrategy {
     public void initialSettlementScores(){
 
         List<Integer> settlementHistory = game.getSettlementCoordsHistoryList();
+        soc.debug.D.ebugPrintlnINFO("----------settlement History evaluated---------");
 
         int[] settlementScoreArray = {0,0,0,0};
         
@@ -1461,6 +1462,7 @@ public class OpeningBuildStrategy {
             nodePair.add(9-i);
 
             int currentNodeScore =  pairNodeEvaluation(nodePair);
+            soc.debug.D.ebugPrintlnINFO("dual node score for player"+i+":"+currentNodeScore);
             settlementScoreArray[i] = currentNodeScore;
             game.setExtraNum(i+1, currentNodeScore);
         }
